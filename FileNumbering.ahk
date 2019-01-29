@@ -32,6 +32,39 @@ SendMode, Input
     }
     Return
 
+^/::
+    window := Explorer_GetWindow()
+    selected := window.document.SelectedItems
+    i := 1
+    for item in selected
+    {
+        current_filepath := item.path
+        SplitPath, current_filepath, current_filename, current_dir, current_ext
+        if (!current_ext)
+            Continue
+
+        if (i = 1)
+        {
+            filepath1 := current_filepath
+            filename1 := current_filename
+            prefix1 := SubStr(current_filename, 1, 3)
+        }
+        else if (i = 2)
+        {
+            prefix2 := SubStr(current_filename, 1, 3)
+            new_currentfilename := prefix1 . SubStr(current_filename, 4)
+            new_prevfilename := prefix2 . SubStr(filename1, 4)
+
+            FileMove, %current_filepath%, %current_dir%\%new_currentfilename%
+            FileMove, %filepath1%, %current_dir%\%new_prevfilename%
+            Return
+        }
+        else
+            Return
+        i++
+    }
+    Return
+
 ^left::
     current_filepath := Explorer_GetSelected()
     SplitPath, current_filepath, current_filename, current_dir, current_ext
